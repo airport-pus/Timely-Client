@@ -1,8 +1,8 @@
 'use client';
 
-import Footer from './footer/footer';
-
 export default function Home() {
+  const cellClass = "py-2 px-4 border border-gray-300 text-center";
+
   return (
     <div
       style={{
@@ -23,7 +23,6 @@ export default function Home() {
           </p>
         </div>
         
-        {/* 학교명 검색, 학년 선택, 반 선택 입력창 */}
         <div className="flex space-x-4 mt-6 w-full">
           <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
             <svg
@@ -69,70 +68,70 @@ export default function Home() {
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">교시</th>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">월</th>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">화</th>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">수</th>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">목</th>
-                <th className="py-2 px-4 border border-gray-300 w-1/6">금</th>
+                <th className={`${cellClass} w-1/6`}>교시</th>
+                <th className={`${cellClass} w-1/6`}>월</th>
+                <th className={`${cellClass} w-1/6`}>화</th>
+                <th className={`${cellClass} w-1/6`}>수</th>
+                <th className={`${cellClass} w-1/6`}>목</th>
+                <th className={`${cellClass} w-1/6`}>금</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">1</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">수학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">과학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">영어</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">체육</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">미술</td>
+                <td className={`${cellClass} h-16`}>1</td>
+                <td className={cellClass}>수학</td>
+                <td className={cellClass}>과학</td>
+                <td className={cellClass}>영어</td>
+                <td className={cellClass}>체육</td>
+                <td className={cellClass}>미술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">2</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">체육</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">수학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">과학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">영어</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">미술</td>
+                <td className={`${cellClass} h-16`}>2</td>
+                <td className={cellClass}>체육</td>
+                <td className={cellClass}>수학</td>
+                <td className={cellClass}>과학</td>
+                <td className={cellClass}>영어</td>
+                <td className={cellClass}>미술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">3</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">음악</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">사회</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">역사</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">정보</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">기술</td>
+                <td className={`${cellClass} h-16`}>3</td>
+                <td className={cellClass}>음악</td>
+                <td className={cellClass}>사회</td>
+                <td className={cellClass}>역사</td>
+                <td className={cellClass}>정보</td>
+                <td className={cellClass}>기술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">4</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">수학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">과학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">영어</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">체육</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">미술</td>
+                <td className={`${cellClass} h-16`}>4</td>
+                <td className={cellClass}>수학</td>
+                <td className={cellClass}>과학</td>
+                <td className={cellClass}>영어</td>
+                <td className={cellClass}>체육</td>
+                <td className={cellClass}>미술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">5</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">음악</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">사회</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">역사</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">정보</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">기술</td>
+                <td className={`${cellClass} h-16`}>5</td>
+                <td className={cellClass}>음악</td>
+                <td className={cellClass}>사회</td>
+                <td className={cellClass}>역사</td>
+                <td className={cellClass}>정보</td>
+                <td className={cellClass}>기술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">6</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">체육</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">수학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">과학</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">영어</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">미술</td>
+                <td className={`${cellClass} h-16`}>6</td>
+                <td className={cellClass}>체육</td>
+                <td className={cellClass}>수학</td>
+                <td className={cellClass}>과학</td>
+                <td className={cellClass}>영어</td>
+                <td className={cellClass}>미술</td>
               </tr>
               <tr>
-                <td className="py-2 px-4 border border-gray-300 text-center h-16">7</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">음악</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">사회</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">역사</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">데이터베이스</td>
-                <td className="py-2 px-4 border border-gray-300 text-center">컴퓨터구조</td>
+                <td className={`${cellClass} h-16`}>7</td>
+                <td className={cellClass}>음악</td>
+                <td className={cellClass}>사회</td>
+                <td className={cellClass}>역사</td>
+                <td className={cellClass}>데이터베이스</td>
+                <td className={cellClass}>컴퓨터구조</td>
               </tr>
             </tbody>
           </table>
