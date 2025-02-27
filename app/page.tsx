@@ -1,5 +1,7 @@
 'use client';
 
+import Footer from './footer/footer';
+
 export default function Home() {
   return (
     <div
@@ -35,6 +37,7 @@ export default function Home() {
         
         <div className="w-full h-[500px] bg-gray-300 mt-8" />
       </div>
+      <Footer />
     </div>
   );
 }
