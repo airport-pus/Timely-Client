@@ -1,0 +1,6 @@
+   /* styles/globals.css */
+   @import '@fontsource/pretendard/index.css';
+
+   body {
+       font-family: 'Pretendard', sans-serif;
+   }
