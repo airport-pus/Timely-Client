@@ -23,16 +23,40 @@ export default function Home() {
           </p>
         </div>
         
-        <div className="flex space-x-4 mt-6">
-          <button className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100">
-            학교 시간표 만들기
-          </button>
-          <button className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100">
-            학원 시간표 만들기
-          </button>
-          <button className="border border-gray-300 px-4 py-2 rounded-md hover:bg-gray-100">
-            일반 일정표 만들기
-          </button>
+        <div className="flex space-x-4 mt-6 w-full">
+          <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-5 w-4 text-gray-500 mr-2"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-4.35-4.35M9 17a8 8 0 100-16 8 8 0 000 16z" />
+            </svg>
+            <input
+              type="text"
+              placeholder="학교명 검색"
+              className="w-full outline-none"
+            />
+          </div>
+          <select className="border border-gray-300 px-4 py-2 rounded-md">
+            <option value="">학년 선택</option>
+            <option value="1">1학년</option>
+            <option value="2">2학년</option>
+            <option value="3">3학년</option>
+            <option value="4">4학년</option>
+            <option value="5">5학년</option>
+            <option value="6">6학년</option>
+          </select>
+          <select className="border border-gray-300 px-4 py-2 rounded-md">
+            <option value="">반 선택</option>
+            {[...Array(12)].map((_, i) => (
+              <option key={i} value={i + 1}>
+                {i + 1}반
+              </option>
+            ))}
+          </select>
         </div>
         
         <div className="w-full h-[500px] bg-gray-300 mt-8" />
