@@ -87,6 +87,13 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
     }
   };
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLTableCellElement>) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      cellRef.current?.blur();
+    }
+  };
+
   useLayoutEffect(() => {
     if (cellRef.current && document.activeElement === cellRef.current) {
       restoreSelection();
@@ -106,6 +113,7 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
       onBlur={handleBlur}
+      onKeyDown={handleKeyDown}
       className={`${className} ${edited ? "bg-[#FFEEE1]" : ""}`}
     >
       {localValue}
