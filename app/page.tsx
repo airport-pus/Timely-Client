@@ -114,7 +114,7 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
       onCompositionEnd={handleCompositionEnd}
       onBlur={handleBlur}
       onKeyDown={handleKeyDown}
-      className={`${className} ${edited ? "bg-[#FFEEE1]" : ""}`}
+      className={`${className} ${edited ? "bg-[#BCCFF1]" : ""}`}
     >
       {localValue}
     </td>
@@ -138,30 +138,29 @@ export default function Home() {
   const [editedCells, setEditedCells] = useState<Set<string>>(new Set());
 
   const handleCellUpdate = (rowIndex: number, colIndex: number, newValue: string) => {
-    setTableData(prevData => {
-      const oldValue = prevData[rowIndex][colIndex];
-      if (oldValue === newValue) return prevData;
+    const oldValue = tableData[rowIndex][colIndex];
+    if (oldValue === newValue) return;
 
-      let hasDuplicate = false;
-      for (let i = 0; i < prevData.length; i++) {
-        for (let j = 0; j < prevData[i].length; j++) {
-          if (i === rowIndex && j === colIndex) continue;
-          if (prevData[i][j] === oldValue) {
-            hasDuplicate = true;
-            break;
-          }
+    let hasDuplicate = false;
+    for (let i = 0; i < tableData.length; i++) {
+      for (let j = 0; j < tableData[i].length; j++) {
+        if (i === rowIndex && j === colIndex) continue;
+        if (tableData[i][j] === oldValue) {
+          hasDuplicate = true;
+          break;
         }
-        if (hasDuplicate) break;
       }
+      if (hasDuplicate) break;
+    }
 
-      let updateAll = false;
-      if (hasDuplicate) {
-        updateAll = window.confirm(
-          `"${oldValue}"이(가) 포함된 다른 셀도 모두 "${newValue}"(으)로 변경하시겠습니까?`
-        );
-      }
-
-      const newData = prevData.map((row, i) =>
+    let updateAll = false;
+    if (hasDuplicate) {
+      updateAll = window.confirm(
+        `"${oldValue}"이(가) 포함된 다른 셀도 모두 "${newValue}"(으)로 변경하시겠습니까?`
+      );
+    }
+    setTableData(prevData =>
+      prevData.map((row, i) =>
         row.map((cell, j) => {
           if (i === rowIndex && j === colIndex) {
             return newValue;
@@ -176,15 +175,13 @@ export default function Home() {
           }
           return cell;
         })
-      );
+      )
+    );
 
-      setEditedCells(prev => {
-        const newSet = new Set(prev);
-        newSet.add(`${rowIndex}-${colIndex}`);
-        return newSet;
-      });
-
-      return newData;
+    setEditedCells(prev => {
+      const newSet = new Set(prev);
+      newSet.add(`${rowIndex}-${colIndex}`);
+      return newSet;
     });
   };
 
