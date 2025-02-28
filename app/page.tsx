@@ -26,7 +26,7 @@ export default function Home() {
           fontFamily: 'Pretendard, sans-serif',
         }}
       >
-        <div className="grid grid-cols-1 gap-0 mx-auto max-w-lg items-center justify-items-center p-4 pb-20 text-black">
+        <div className="grid grid-cols-1 gap-0 mx-auto max-w-192 items-center justify-items-center p-4 pb-20 text-black">
           <Header />
           <Search />
           <Edit />
