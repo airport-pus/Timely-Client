@@ -193,100 +193,113 @@ export default function Home() {
   };
 
   return (
-    <div
-      style={{
-        backgroundColor: '#F3f4f6',
-        minHeight: '100vh',
-        fontFamily: 'Pretendard, sans-serif',
-      }}
-    >
-      <div className="grid grid-cols-1 gap-0 mx-[580px] items-center justify-items-center p-8 pb-20 text-black">
-        <div className="w-full">
-          <h1 className="text-2xl font-bold mt-6 mb-2 text-left">
-            시간췍 - 초·중·고등학생 시간표 제작
-          </h1>
-          <p className="text-left">
-            &quot;지금 무슨 수업일까?&quot; <strong>학교, 학년, 반</strong>만 입력하면 시간표를 만들어드립니다.<br />
-            더 이상 복잡하게 찾을 필요 없이, 간편하게 내 시간표를 확인하세요!
-          </p>
-        </div>
+    <>
+      <style jsx global>{`
+        ::selection {
+          background-color: #2B8F70;
+          color: #fff;
+        }
+        ::-moz-selection {
+          background-color: #2B8F70;
+          color: #fff;
+        }
+      `}</style>
 
-        <div className="flex space-x-4 mt-6 w-full">
-          <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-5 w-5 text-gray-500 mr-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M21 21l-4.35-4.35M9 17a8 8 0 100-16 8 8 0 000 16z"
+      <div
+        style={{
+          backgroundColor: '#F3f4f6',
+          minHeight: '100vh',
+          fontFamily: 'Pretendard, sans-serif',
+        }}
+      >
+        <div className="grid grid-cols-1 gap-0 mx-[580px] items-center justify-items-center p-8 pb-20 text-black">
+          <div className="w-full">
+            <h1 className="text-2xl font-bold mt-6 mb-2 text-left">
+              시간췍 - 초·중·고등학생 시간표 제작
+            </h1>
+            <p className="text-left">
+              &quot;지금 무슨 수업일까?&quot; <strong>학교, 학년, 반</strong>만 입력하면 시간표를 만들어드립니다.<br />
+              더 이상 복잡하게 찾을 필요 없이, 간편하게 내 시간표를 확인하세요!
+            </p>
+          </div>
+
+          <div className="flex space-x-4 mt-6 w-full">
+            <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-500 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth="2"
+                  d="M21 21l-4.35-4.35M9 17a8 8 0 100-16 8 8 0 000 16z"
+                />
+              </svg>
+              <input
+                type="text"
+                placeholder="학교명 검색"
+                className="w-full outline-none"
               />
-            </svg>
-            <input
-              type="text"
-              placeholder="학교명 검색"
-              className="w-full outline-none"
-            />
-          </div>
-          <select className="border border-gray-300 px-4 py-2 rounded-md">
-            <option value="">학년 선택</option>
-            <option value="1">1학년</option>
-            <option value="2">2학년</option>
-            <option value="3">3학년</option>
-            <option value="4">4학년</option>
-            <option value="5">5학년</option>
-            <option value="6">6학년</option>
-          </select>
-          <select className="border border-gray-300 px-4 py-2 rounded-md">
-            <option value="">반 선택</option>
-            {[...Array(12)].map((_, i) => (
-              <option key={i} value={i + 1}>
-                {i + 1}반
-              </option>
-            ))}
-          </select>
-        </div>
-
-        <div className="w-full mt-8 overflow-x-auto">
-          <div className="text-gray300 text-center text-[15px] mb-3">
-          ※ <span className="text-[#3B73DA]">셀을 클릭</span>하여 과목명을 수정한 후 <span className="text-[#3B73DA]">Enter</span>를 누르면 변경사항이 저장됩니다.
-          </div>
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className={`${cellClass} w-1/8`}>교시</th>
-                <th className={`${cellClass} w-1/6`}>월</th>
-                <th className={`${cellClass} w-1/6`}>화</th>
-                <th className={`${cellClass} w-1/6`}>수</th>
-                <th className={`${cellClass} w-1/6`}>목</th>
-                <th className={`${cellClass} w-1/6`}>금</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cellValue, colIndex) => (
-                    <EditableCell
-                      key={colIndex}
-                      value={cellValue}
-                      rowIndex={rowIndex}
-                      colIndex={colIndex}
-                      edited={editedCells.has(`${rowIndex}-${colIndex}`)}
-                      className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
-                      onCellUpdate={handleCellUpdate}
-                    />
-                  ))}
-                </tr>
+            </div>
+            <select className="border border-gray-300 px-4 py-2 rounded-md">
+              <option value="">학년 선택</option>
+              <option value="1">1학년</option>
+              <option value="2">2학년</option>
+              <option value="3">3학년</option>
+              <option value="4">4학년</option>
+              <option value="5">5학년</option>
+              <option value="6">6학년</option>
+            </select>
+            <select className="border border-gray-300 px-4 py-2 rounded-md">
+              <option value="">반 선택</option>
+              {[...Array(12)].map((_, i) => (
+                <option key={i} value={i + 1}>
+                  {i + 1}반
+                </option>
               ))}
-            </tbody>
-          </table>
+            </select>
+          </div>
+
+          <div className="w-full mt-8 overflow-x-auto">
+            <div className="text-gray300 text-center text-[15px] mb-3">
+            ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후 <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
+            </div>
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className={`${cellClass} w-1/8`}>교시</th>
+                  <th className={`${cellClass} w-1/6`}>월</th>
+                  <th className={`${cellClass} w-1/6`}>화</th>
+                  <th className={`${cellClass} w-1/6`}>수</th>
+                  <th className={`${cellClass} w-1/6`}>목</th>
+                  <th className={`${cellClass} w-1/6`}>금</th>
+                </tr>
+              </thead>
+              <tbody>
+                {tableData.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {row.map((cellValue, colIndex) => (
+                      <EditableCell
+                        key={colIndex}
+                        value={cellValue}
+                        rowIndex={rowIndex}
+                        colIndex={colIndex}
+                        edited={editedCells.has(`${rowIndex}-${colIndex}`)}
+                        className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
+                        onCellUpdate={handleCellUpdate}
+                      />
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
+    </>
   );
 }
