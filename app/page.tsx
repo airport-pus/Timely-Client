@@ -1,11 +1,60 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useLayoutEffect } from 'react';
 
-function EditableCell({ initialValue, className }: { initialValue: any, className: any }) {
+function EditableCell({ initialValue, className }: { initialValue: any; className: any }) {
   const [value, setValue] = useState(initialValue);
   const [edited, setEdited] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
+  const cellRef = useRef<HTMLTableCellElement>(null);
+  const selectionRef = useRef<{ start: number; end: number } | null>(null);
+
+  const saveSelection = () => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0 && cellRef.current) {
+      const range = selection.getRangeAt(0);
+      const preCaretRange = range.cloneRange();
+      preCaretRange.selectNodeContents(cellRef.current);
+      preCaretRange.setEnd(range.endContainer, range.endOffset);
+      const start = preCaretRange.toString().length;
+      selectionRef.current = { start, end: start };
+    }
+  };
+  const restoreSelection = () => {
+    const sel = window.getSelection();
+    if (sel && cellRef.current && selectionRef.current) {
+      let charIndex = 0;
+      const range = document.createRange();
+      range.setStart(cellRef.current, 0);
+      range.collapse(true);
+      const nodeStack: Node[] = [cellRef.current];
+      let found = false;
+
+      while (nodeStack.length > 0 && !found) {
+        const node = nodeStack.shift();
+        if (!node) continue;
+        if (node.nodeType === Node.TEXT_NODE) {
+          const text = node.textContent || "";
+          const nextCharIndex = charIndex + text.length;
+          if (selectionRef.current.start >= charIndex && selectionRef.current.start <= nextCharIndex) {
+            range.setStart(node, selectionRef.current.start - charIndex);
+            range.collapse(true);
+            found = true;
+            break;
+          }
+          charIndex = nextCharIndex;
+        } else {
+          for (let i = 0; i < node.childNodes.length; i++) {
+            nodeStack.push(node.childNodes[i]);
+          }
+        }
+      }
+      if (found) {
+        sel.removeAllRanges();
+        sel.addRange(range);
+      }
+    }
+  };
 
   const handleCompositionStart = () => {
     setIsComposing(true);
@@ -13,19 +62,28 @@ function EditableCell({ initialValue, className }: { initialValue: any, classNam
 
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
     setIsComposing(false);
+    saveSelection();
     setValue(e.currentTarget.textContent);
     setEdited(true);
   };
 
   const handleInput = (e: React.FormEvent<HTMLTableCellElement>) => {
     if (!isComposing) {
+      saveSelection();
       setValue(e.currentTarget.textContent);
       setEdited(true);
     }
   };
 
+  useLayoutEffect(() => {
+    if (cellRef.current && document.activeElement === cellRef.current) {
+      restoreSelection();
+    }
+  }, [value]);
+
   return (
     <td
+      ref={cellRef}
       contentEditable
       suppressContentEditableWarning
       onInput={handleInput}
