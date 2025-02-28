@@ -1,10 +1,18 @@
-'use client';
+"use client";
 
 import { useState, useRef, useLayoutEffect } from 'react';
 
-function EditableCell({ initialValue, className }: { initialValue: string; className: string }) {
-  const [value, setValue] = useState(initialValue);
-  const [edited, setEdited] = useState(false);
+type EditableCellProps = {
+  value: string;
+  rowIndex: number;
+  colIndex: number;
+  className: string;
+  edited: boolean;
+  onCellUpdate: (rowIndex: number, colIndex: number, newValue: string) => void;
+};
+
+function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpdate }: EditableCellProps) {
+  const [localValue, setLocalValue] = useState(value);
   const [isComposing, setIsComposing] = useState(false);
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
@@ -30,7 +38,6 @@ function EditableCell({ initialValue, className }: { initialValue: string; class
       range.collapse(true);
       const nodeStack: Node[] = [cellRef.current];
       let found = false;
-
       while (nodeStack.length > 0 && !found) {
         const node = nodeStack.shift();
         if (!node) continue;
@@ -64,15 +71,19 @@ function EditableCell({ initialValue, className }: { initialValue: string; class
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
     setIsComposing(false);
     saveSelection();
-    setValue(e.currentTarget.textContent || '');
-    setEdited(true);
+    setLocalValue(e.currentTarget.textContent || '');
   };
 
   const handleInput = (e: React.FormEvent<HTMLTableCellElement>) => {
     if (!isComposing) {
       saveSelection();
-      setValue(e.currentTarget.textContent || '');
-      setEdited(true);
+      setLocalValue(e.currentTarget.textContent || '');
+    }
+  };
+
+  const handleBlur = () => {
+    if (localValue !== value) {
+      onCellUpdate(rowIndex, colIndex, localValue);
     }
   };
 
@@ -80,6 +91,10 @@ function EditableCell({ initialValue, className }: { initialValue: string; class
     if (cellRef.current && document.activeElement === cellRef.current) {
       restoreSelection();
     }
+  }, [localValue]);
+
+  useLayoutEffect(() => {
+    setLocalValue(value);
   }, [value]);
 
   return (
@@ -90,15 +105,80 @@ function EditableCell({ initialValue, className }: { initialValue: string; class
       onInput={handleInput}
       onCompositionStart={handleCompositionStart}
       onCompositionEnd={handleCompositionEnd}
-      className={`${className} ${edited ? "bg-[#FFFFE7]" : ""}`}
+      onBlur={handleBlur}
+      className={`${className} ${edited ? "bg-[#FFEEE1]" : ""}`}
     >
-      {value}
+      {localValue}
     </td>
   );
 }
 
 export default function Home() {
   const cellClass = "py-2 px-4 border border-gray-300 text-center";
+
+  const initialData = [
+    ["1", "수학", "과학", "영어", "체육", "미술"],
+    ["2", "체육", "수학", "과학", "영어", "미술"],
+    ["3", "음악", "사회", "역사", "정보", "기술"],
+    ["4", "수학", "과학", "영어", "체육", "미술"],
+    ["5", "음악", "사회", "역사", "정보", "기술"],
+    ["6", "체육", "수학", "과학", "영어", "미술"],
+    ["7", "음악", "사회", "역사", "데이터베이스", "컴퓨터구조"],
+  ];
+
+  const [tableData, setTableData] = useState(initialData);
+  const [editedCells, setEditedCells] = useState<Set<string>>(new Set());
+
+  const handleCellUpdate = (rowIndex: number, colIndex: number, newValue: string) => {
+    setTableData(prevData => {
+      const oldValue = prevData[rowIndex][colIndex];
+      if (oldValue === newValue) return prevData;
+
+      let hasDuplicate = false;
+      for (let i = 0; i < prevData.length; i++) {
+        for (let j = 0; j < prevData[i].length; j++) {
+          if (i === rowIndex && j === colIndex) continue;
+          if (prevData[i][j] === oldValue) {
+            hasDuplicate = true;
+            break;
+          }
+        }
+        if (hasDuplicate) break;
+      }
+
+      let updateAll = false;
+      if (hasDuplicate) {
+        updateAll = window.confirm(
+          `"${oldValue}"이(가) 포함된 다른 셀도 모두 "${newValue}"(으)로 변경하시겠습니까?`
+        );
+      }
+
+      const newData = prevData.map((row, i) =>
+        row.map((cell, j) => {
+          if (i === rowIndex && j === colIndex) {
+            return newValue;
+          }
+          if (updateAll && cell === oldValue) {
+            setEditedCells(prev => {
+              const newSet = new Set(prev);
+              newSet.add(`${i}-${j}`);
+              return newSet;
+            });
+            return newValue;
+          }
+          return cell;
+        })
+      );
+
+      setEditedCells(prev => {
+        const newSet = new Set(prev);
+        newSet.add(`${rowIndex}-${colIndex}`);
+        return newSet;
+      });
+
+      return newData;
+    });
+  };
 
   return (
     <div
@@ -173,62 +253,21 @@ export default function Home() {
               </tr>
             </thead>
             <tbody>
-              <tr>
-                <EditableCell initialValue="1" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="수학" className={cellClass} />
-                <EditableCell initialValue="과학" className={cellClass} />
-                <EditableCell initialValue="영어" className={cellClass} />
-                <EditableCell initialValue="체육" className={cellClass} />
-                <EditableCell initialValue="미술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="2" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="체육" className={cellClass} />
-                <EditableCell initialValue="수학" className={cellClass} />
-                <EditableCell initialValue="과학" className={cellClass} />
-                <EditableCell initialValue="영어" className={cellClass} />
-                <EditableCell initialValue="미술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="3" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="음악" className={cellClass} />
-                <EditableCell initialValue="사회" className={cellClass} />
-                <EditableCell initialValue="역사" className={cellClass} />
-                <EditableCell initialValue="정보" className={cellClass} />
-                <EditableCell initialValue="기술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="4" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="수학" className={cellClass} />
-                <EditableCell initialValue="과학" className={cellClass} />
-                <EditableCell initialValue="영어" className={cellClass} />
-                <EditableCell initialValue="체육" className={cellClass} />
-                <EditableCell initialValue="미술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="5" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="음악" className={cellClass} />
-                <EditableCell initialValue="사회" className={cellClass} />
-                <EditableCell initialValue="역사" className={cellClass} />
-                <EditableCell initialValue="정보" className={cellClass} />
-                <EditableCell initialValue="기술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="6" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="체육" className={cellClass} />
-                <EditableCell initialValue="수학" className={cellClass} />
-                <EditableCell initialValue="과학" className={cellClass} />
-                <EditableCell initialValue="영어" className={cellClass} />
-                <EditableCell initialValue="미술" className={cellClass} />
-              </tr>
-              <tr>
-                <EditableCell initialValue="7" className={`${cellClass} h-16`} />
-                <EditableCell initialValue="음악" className={cellClass} />
-                <EditableCell initialValue="사회" className={cellClass} />
-                <EditableCell initialValue="역사" className={cellClass} />
-                <EditableCell initialValue="데이터베이스" className={cellClass} />
-                <EditableCell initialValue="컴퓨터구조" className={cellClass} />
-              </tr>
+              {tableData.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cellValue, colIndex) => (
+                    <EditableCell
+                      key={colIndex}
+                      value={cellValue}
+                      rowIndex={rowIndex}
+                      colIndex={colIndex}
+                      edited={editedCells.has(`${rowIndex}-${colIndex}`)}
+                      className={`${cellClass} ${colIndex === 0 ? "h-16" : ""}`}
+                      onCellUpdate={handleCellUpdate}
+                    />
+                  ))}
+                </tr>
+              ))}
             </tbody>
           </table>
         </div>
