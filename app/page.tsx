@@ -253,6 +253,9 @@ export default function Home() {
         </div>
 
         <div className="w-full mt-8 overflow-x-auto">
+          <div className="text-gray300 text-center text-[15px] mb-3">
+          ※ <span className="text-[#3B73DA]">셀을 클릭</span>하여 과목명을 수정한 후 <span className="text-[#3B73DA]">Enter</span>를 누르면 변경사항이 저장됩니다.
+          </div>
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
