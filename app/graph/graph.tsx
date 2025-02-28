@@ -145,7 +145,7 @@ export type GraphProps = {
 
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
-  const [title, setTitle] = useState("시간표 제목");
+  const [title, setTitle] = useState("타이틀 입력");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -211,7 +211,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
           className="text-2xl font-bold mb-4 w-full border-b-2 border-transparent hover:border-gray-300 focus:border-[#2B8F70] focus:outline-none px-2 py-1 mt-4"
         />
         <div
-          className="w-80 h-106 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+          className="w-80 h-107 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
           onClick={handleImageClick}
           onDrop={handleDrop}
           onDragOver={(e) => e.preventDefault()}
@@ -237,7 +237,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
                 d="M12 6v6m0 0v6m0-6h6m-6 0H6"
             />
             </svg>
-            <p className="text-gray-500">클릭하거나 이미지를 드래그하세요</p>
+            <p className="text-gray-500">드래그 앤 드롭 또는 직접 업로드 해 주세요.</p>
         </>
         )}
 
