@@ -1,5 +1,43 @@
 'use client';
 
+import { useState } from 'react';
+
+function EditableCell({ initialValue, className }: { initialValue: any, className: any }) {
+  const [value, setValue] = useState(initialValue);
+  const [edited, setEdited] = useState(false);
+  const [isComposing, setIsComposing] = useState(false);
+
+  const handleCompositionStart = () => {
+    setIsComposing(true);
+  };
+
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
+    setIsComposing(false);
+    setValue(e.currentTarget.textContent);
+    setEdited(true);
+  };
+
+  const handleInput = (e: React.FormEvent<HTMLTableCellElement>) => {
+    if (!isComposing) {
+      setValue(e.currentTarget.textContent);
+      setEdited(true);
+    }
+  };
+
+  return (
+    <td
+      contentEditable
+      suppressContentEditableWarning
+      onInput={handleInput}
+      onCompositionStart={handleCompositionStart}
+      onCompositionEnd={handleCompositionEnd}
+      className={`${className} ${edited ? "bg-[#FFFFE7]" : ""}`}
+    >
+      {value}
+    </td>
+  );
+}
+
 export default function Home() {
   const cellClass = "py-2 px-4 border border-gray-300 text-center";
 
@@ -12,7 +50,6 @@ export default function Home() {
       }}
     >
       <div className="grid grid-cols-1 gap-0 mx-[580px] items-center justify-items-center p-8 pb-20 text-black">
-        
         <div className="w-full">
           <h1 className="text-2xl font-bold mt-6 mb-2 text-left">
             시간췍 - 초·중·고등학생 시간표 제작
@@ -22,7 +59,7 @@ export default function Home() {
             더 이상 복잡하게 찾을 필요 없이, 간편하게 내 시간표를 확인하세요!
           </p>
         </div>
-        
+
         <div className="flex space-x-4 mt-6 w-full">
           <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
             <svg
@@ -63,7 +100,7 @@ export default function Home() {
             ))}
           </select>
         </div>
-        
+
         <div className="w-full mt-8 overflow-x-auto">
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
@@ -78,65 +115,64 @@ export default function Home() {
             </thead>
             <tbody>
               <tr>
-                <td className={`${cellClass} h-16`}>1</td>
-                <td className={cellClass}>수학</td>
-                <td className={cellClass}>과학</td>
-                <td className={cellClass}>영어</td>
-                <td className={cellClass}>체육</td>
-                <td className={cellClass}>미술</td>
+                <EditableCell initialValue="1" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="수학" className={cellClass} />
+                <EditableCell initialValue="과학" className={cellClass} />
+                <EditableCell initialValue="영어" className={cellClass} />
+                <EditableCell initialValue="체육" className={cellClass} />
+                <EditableCell initialValue="미술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>2</td>
-                <td className={cellClass}>체육</td>
-                <td className={cellClass}>수학</td>
-                <td className={cellClass}>과학</td>
-                <td className={cellClass}>영어</td>
-                <td className={cellClass}>미술</td>
+                <EditableCell initialValue="2" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="체육" className={cellClass} />
+                <EditableCell initialValue="수학" className={cellClass} />
+                <EditableCell initialValue="과학" className={cellClass} />
+                <EditableCell initialValue="영어" className={cellClass} />
+                <EditableCell initialValue="미술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>3</td>
-                <td className={cellClass}>음악</td>
-                <td className={cellClass}>사회</td>
-                <td className={cellClass}>역사</td>
-                <td className={cellClass}>정보</td>
-                <td className={cellClass}>기술</td>
+                <EditableCell initialValue="3" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="음악" className={cellClass} />
+                <EditableCell initialValue="사회" className={cellClass} />
+                <EditableCell initialValue="역사" className={cellClass} />
+                <EditableCell initialValue="정보" className={cellClass} />
+                <EditableCell initialValue="기술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>4</td>
-                <td className={cellClass}>수학</td>
-                <td className={cellClass}>과학</td>
-                <td className={cellClass}>영어</td>
-                <td className={cellClass}>체육</td>
-                <td className={cellClass}>미술</td>
+                <EditableCell initialValue="4" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="수학" className={cellClass} />
+                <EditableCell initialValue="과학" className={cellClass} />
+                <EditableCell initialValue="영어" className={cellClass} />
+                <EditableCell initialValue="체육" className={cellClass} />
+                <EditableCell initialValue="미술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>5</td>
-                <td className={cellClass}>음악</td>
-                <td className={cellClass}>사회</td>
-                <td className={cellClass}>역사</td>
-                <td className={cellClass}>정보</td>
-                <td className={cellClass}>기술</td>
+                <EditableCell initialValue="5" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="음악" className={cellClass} />
+                <EditableCell initialValue="사회" className={cellClass} />
+                <EditableCell initialValue="역사" className={cellClass} />
+                <EditableCell initialValue="정보" className={cellClass} />
+                <EditableCell initialValue="기술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>6</td>
-                <td className={cellClass}>체육</td>
-                <td className={cellClass}>수학</td>
-                <td className={cellClass}>과학</td>
-                <td className={cellClass}>영어</td>
-                <td className={cellClass}>미술</td>
+                <EditableCell initialValue="6" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="체육" className={cellClass} />
+                <EditableCell initialValue="수학" className={cellClass} />
+                <EditableCell initialValue="과학" className={cellClass} />
+                <EditableCell initialValue="영어" className={cellClass} />
+                <EditableCell initialValue="미술" className={cellClass} />
               </tr>
               <tr>
-                <td className={`${cellClass} h-16`}>7</td>
-                <td className={cellClass}>음악</td>
-                <td className={cellClass}>사회</td>
-                <td className={cellClass}>역사</td>
-                <td className={cellClass}>데이터베이스</td>
-                <td className={cellClass}>컴퓨터구조</td>
+                <EditableCell initialValue="7" className={`${cellClass} h-16`} />
+                <EditableCell initialValue="음악" className={cellClass} />
+                <EditableCell initialValue="사회" className={cellClass} />
+                <EditableCell initialValue="역사" className={cellClass} />
+                <EditableCell initialValue="데이터베이스" className={cellClass} />
+                <EditableCell initialValue="컴퓨터구조" className={cellClass} />
               </tr>
             </tbody>
           </table>
         </div>
-        
       </div>
     </div>
   );
