@@ -3,11 +3,11 @@ import React from 'react';
 
 const Search = () => {
   return (
-    <div className="flex space-x-4 mt-6 w-full">
+    <div className="flex space-x-2 mt-6 w-full">
       <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
-          className="h-5 w-5 text-gray-500 mr-2"
+          className="h-5 w-6 text-gray-500 mr-2"
           fill="none"
           viewBox="0 0 24 24"
           stroke="currentColor"
@@ -34,7 +34,7 @@ const Search = () => {
         <option value="5">5학년</option>
         <option value="6">6학년</option>
       </select>
-      <select className="border border-gray-300 px-4 py-2 rounded-md">
+      <select className="border border-gray-300 px-4 py-2 rounded-md mr-[-56px]">
         <option value="">반 선택</option>
         {[...Array(12)].map((_, i) => (
           <option key={i} value={i + 1}>
