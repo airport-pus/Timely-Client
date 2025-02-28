@@ -2,7 +2,7 @@
 
 import { useState, useRef, useLayoutEffect } from 'react';
 
-function EditableCell({ initialValue, className }: { initialValue: any; className: any }) {
+function EditableCell({ initialValue, className }: { initialValue: string; className: string }) {
   const [value, setValue] = useState(initialValue);
   const [edited, setEdited] = useState(false);
   const [isComposing, setIsComposing] = useState(false);
@@ -20,6 +20,7 @@ function EditableCell({ initialValue, className }: { initialValue: any; classNam
       selectionRef.current = { start, end: start };
     }
   };
+
   const restoreSelection = () => {
     const sel = window.getSelection();
     if (sel && cellRef.current && selectionRef.current) {
@@ -63,14 +64,14 @@ function EditableCell({ initialValue, className }: { initialValue: any; classNam
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
     setIsComposing(false);
     saveSelection();
-    setValue(e.currentTarget.textContent);
+    setValue(e.currentTarget.textContent || '');
     setEdited(true);
   };
 
   const handleInput = (e: React.FormEvent<HTMLTableCellElement>) => {
     if (!isComposing) {
       saveSelection();
-      setValue(e.currentTarget.textContent);
+      setValue(e.currentTarget.textContent || '');
       setEdited(true);
     }
   };
@@ -113,7 +114,7 @@ export default function Home() {
             시간췍 - 초·중·고등학생 시간표 제작
           </h1>
           <p className="text-left">
-            "지금 무슨 수업일까?" <strong>학교, 학년, 반</strong>만 입력하면 시간표를 만들어드립니다.<br />
+            &quot;지금 무슨 수업일까?&quot; <strong>학교, 학년, 반</strong>만 입력하면 시간표를 만들어드립니다.<br />
             더 이상 복잡하게 찾을 필요 없이, 간편하게 내 시간표를 확인하세요!
           </p>
         </div>
