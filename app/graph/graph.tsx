@@ -130,7 +130,7 @@ function EditableCell({
       onCompositionEnd={isEditable ? handleCompositionEnd : undefined}
       onBlur={isEditable ? handleBlur : undefined}
       onKeyDown={isEditable ? handleKeyDown : undefined}
-      className={`${className} ${edited ? "bg-[#BCCFF1]" : ""}`}
+      className={`${className} ${edited ? "bg-[#FFFFFF]" : ""}`}
     >
       {localValue}
     </td>
