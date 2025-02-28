@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useRef, useLayoutEffect } from 'react';
+import Header from './header/header';
 
 type EditableCellProps = {
   value: string;
@@ -13,7 +14,6 @@ type EditableCellProps = {
 
 function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpdate }: EditableCellProps) {
   const isEditable = colIndex !== 0;
-
   const [localValue, setLocalValue] = useState(value);
   const [isComposing, setIsComposing] = useState(false);
   const cellRef = useRef<HTMLTableCellElement>(null);
@@ -213,16 +213,8 @@ export default function Home() {
         }}
       >
         <div className="grid grid-cols-1 gap-0 mx-[580px] items-center justify-items-center p-8 pb-20 text-black">
-          <div className="w-full">
-            <h1 className="text-2xl font-bold mt-6 mb-2 text-left">
-              시간췍 - 초·중·고등학생 시간표 제작
-            </h1>
-            <p className="text-left">
-              &quot;지금 무슨 수업일까?&quot; <strong>학교, 학년, 반</strong>만 입력하면 시간표를 만들어드립니다.<br />
-              더 이상 복잡하게 찾을 필요 없이, 간편하게 내 시간표를 확인하세요!
-            </p>
-          </div>
-
+          <Header />
+          
           <div className="flex space-x-4 mt-6 w-full">
             <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
               <svg
@@ -239,11 +231,7 @@ export default function Home() {
                   d="M21 21l-4.35-4.35M9 17a8 8 0 100-16 8 8 0 000 16z"
                 />
               </svg>
-              <input
-                type="text"
-                placeholder="학교명 검색"
-                className="w-full outline-none"
-              />
+              <input type="text" placeholder="학교명 검색" className="w-full outline-none" />
             </div>
             <select className="border border-gray-300 px-4 py-2 rounded-md">
               <option value="">학년 선택</option>
@@ -266,7 +254,7 @@ export default function Home() {
 
           <div className="w-full mt-8 overflow-x-auto">
             <div className="text-gray300 text-center text-[15px] mb-3">
-            ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후 <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
+              ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후 <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
             </div>
             <table className="w-full border-collapse">
               <thead className="bg-gray-200">
