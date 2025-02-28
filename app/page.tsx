@@ -12,6 +12,8 @@ type EditableCellProps = {
 };
 
 function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpdate }: EditableCellProps) {
+  const isEditable = colIndex !== 0;
+
   const [localValue, setLocalValue] = useState(value);
   const [isComposing, setIsComposing] = useState(false);
   const cellRef = useRef<HTMLTableCellElement>(null);
@@ -65,16 +67,19 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
   };
 
   const handleCompositionStart = () => {
+    if (!isEditable) return;
     setIsComposing(true);
   };
 
   const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
+    if (!isEditable) return;
     setIsComposing(false);
     saveSelection();
     setLocalValue(e.currentTarget.textContent || '');
   };
 
   const handleInput = (e: React.FormEvent<HTMLTableCellElement>) => {
+    if (!isEditable) return;
     if (!isComposing) {
       saveSelection();
       setLocalValue(e.currentTarget.textContent || '');
@@ -82,12 +87,14 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
   };
 
   const handleBlur = () => {
+    if (!isEditable) return;
     if (localValue !== value) {
       onCellUpdate(rowIndex, colIndex, localValue);
     }
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTableCellElement>) => {
+    if (!isEditable) return;
     if (e.key === "Enter") {
       e.preventDefault();
       cellRef.current?.blur();
@@ -95,10 +102,10 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
   };
 
   useLayoutEffect(() => {
-    if (cellRef.current && document.activeElement === cellRef.current) {
+    if (isEditable && cellRef.current && document.activeElement === cellRef.current) {
       restoreSelection();
     }
-  }, [localValue]);
+  }, [localValue, isEditable]);
 
   useLayoutEffect(() => {
     setLocalValue(value);
@@ -107,13 +114,13 @@ function EditableCell({ value, rowIndex, colIndex, className, edited, onCellUpda
   return (
     <td
       ref={cellRef}
-      contentEditable
-      suppressContentEditableWarning
-      onInput={handleInput}
-      onCompositionStart={handleCompositionStart}
-      onCompositionEnd={handleCompositionEnd}
-      onBlur={handleBlur}
-      onKeyDown={handleKeyDown}
+      contentEditable={isEditable}
+      suppressContentEditableWarning={isEditable}
+      onInput={isEditable ? handleInput : undefined}
+      onCompositionStart={isEditable ? handleCompositionStart : undefined}
+      onCompositionEnd={isEditable ? handleCompositionEnd : undefined}
+      onBlur={isEditable ? handleBlur : undefined}
+      onKeyDown={isEditable ? handleKeyDown : undefined}
       className={`${className} ${edited ? "bg-[#BCCFF1]" : ""}`}
     >
       {localValue}
@@ -249,7 +256,7 @@ export default function Home() {
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
-                <th className={`${cellClass} w-1/6`}>교시</th>
+                <th className={`${cellClass} w-1/8`}>교시</th>
                 <th className={`${cellClass} w-1/6`}>월</th>
                 <th className={`${cellClass} w-1/6`}>화</th>
                 <th className={`${cellClass} w-1/6`}>수</th>
@@ -267,7 +274,7 @@ export default function Home() {
                       rowIndex={rowIndex}
                       colIndex={colIndex}
                       edited={editedCells.has(`${rowIndex}-${colIndex}`)}
-                      className={`${cellClass} ${colIndex === 0 ? "h-16" : ""}`}
+                      className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
                       onCellUpdate={handleCellUpdate}
                     />
                   ))}
