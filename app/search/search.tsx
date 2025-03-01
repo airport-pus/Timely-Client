@@ -1,12 +1,31 @@
 "use client";
 import React from 'react';
 
+const GRADE_OPTIONS = [
+  { value: '', label: '학년 선택' },
+  { value: '1', label: '1학년' },
+  { value: '2', label: '2학년' },
+  { value: '3', label: '3학년' },
+  { value: '4', label: '4학년' },
+  { value: '5', label: '5학년' },
+  { value: '6', label: '6학년' },
+];
+
+const CLASS_OPTIONS = [
+  { value: '', label: '반 선택' },
+  ...Array.from({ length: 12 }, (_, i) => ({
+    value: String(i + 1),
+    label: `${i + 1}반`,
+  })),
+];
+
 const Search = () => {
   return (
     <div className="flex space-x-2 mt-6 w-full">
       <div className="flex items-center border border-gray-300 rounded-md w-full px-4 py-2">
         <svg
           xmlns="http://www.w3.org/2000/svg"
+          aria-hidden="true"
           className="h-5 w-6 text-gray-500 mr-2"
           fill="none"
           viewBox="0 0 24 24"
@@ -26,19 +45,16 @@ const Search = () => {
         />
       </div>
       <select className="border border-gray-300 px-4 py-2 rounded-md">
-        <option value="">학년 선택</option>
-        <option value="1">1학년</option>
-        <option value="2">2학년</option>
-        <option value="3">3학년</option>
-        <option value="4">4학년</option>
-        <option value="5">5학년</option>
-        <option value="6">6학년</option>
+        {GRADE_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
       </select>
       <select className="border border-gray-300 px-4 py-2 rounded-md mr-[-56px]">
-        <option value="">반 선택</option>
-        {[...Array(12)].map((_, i) => (
-          <option key={i} value={i + 1}>
-            {i + 1}반
+        {CLASS_OPTIONS.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
           </option>
         ))}
       </select>

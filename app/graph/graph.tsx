@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useRef, useLayoutEffect } from "react";
+import React, { useState, useRef, useLayoutEffect, useCallback } from "react";
 import Upload from "../upload/upload";
 
 export type EditableCellProps = {
@@ -26,7 +26,7 @@ function EditableCell({
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
-  const saveSelection = () => {
+  const saveSelection = useCallback(() => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0 && cellRef.current) {
       const range = selection.getRangeAt(0);
@@ -36,54 +36,40 @@ function EditableCell({
       const start = preCaretRange.toString().length;
       selectionRef.current = { start, end: start };
     }
-  };
+  }, []);
 
-  const restoreSelection = () => {
+  const restoreSelection = useCallback(() => {
     const sel = window.getSelection();
     if (sel && cellRef.current && selectionRef.current) {
       let charIndex = 0;
       const range = document.createRange();
-      range.setStart(cellRef.current, 0);
-      range.collapse(true);
-      const nodeStack: Node[] = [cellRef.current];
-      let found = false;
-      while (nodeStack.length > 0 && !found) {
-        const node = nodeStack.shift();
-        if (!node) continue;
-        if (node.nodeType === Node.TEXT_NODE) {
-          const text = node.textContent || "";
-          const nextCharIndex = charIndex + text.length;
-          if (
-            selectionRef.current.start >= charIndex &&
-            selectionRef.current.start <= nextCharIndex
-          ) {
-            range.setStart(node, selectionRef.current.start - charIndex);
-            range.collapse(true);
-            found = true;
-            break;
-          }
-          charIndex = nextCharIndex;
-        } else {
-          for (let i = 0; i < node.childNodes.length; i++) {
-            nodeStack.push(node.childNodes[i]);
-          }
+      const treeWalker = document.createTreeWalker(
+        cellRef.current,
+        NodeFilter.SHOW_TEXT,
+        null
+      );
+      let currentNode: Node | null = treeWalker.nextNode();
+      while (currentNode) {
+        const textLength = currentNode.textContent?.length || 0;
+        if (charIndex + textLength >= selectionRef.current.start) {
+          range.setStart(currentNode, selectionRef.current.start - charIndex);
+          range.collapse(true);
+          break;
         }
+        charIndex += textLength;
+        currentNode = treeWalker.nextNode();
       }
-      if (found) {
-        sel.removeAllRanges();
-        sel.addRange(range);
-      }
+      sel.removeAllRanges();
+      sel.addRange(range);
     }
-  };
+  }, []);
 
   const handleCompositionStart = () => {
     if (!isEditable) return;
     setIsComposing(true);
   };
 
-  const handleCompositionEnd = (
-    e: React.CompositionEvent<HTMLTableCellElement>
-  ) => {
+  const handleCompositionEnd = (e: React.CompositionEvent<HTMLTableCellElement>) => {
     if (!isEditable) return;
     setIsComposing(false);
     saveSelection();
@@ -117,7 +103,7 @@ function EditableCell({
     if (isEditable && cellRef.current && document.activeElement === cellRef.current) {
       restoreSelection();
     }
-  }, [localValue, isEditable]);
+  }, [localValue, isEditable, restoreSelection]);
 
   useLayoutEffect(() => {
     setLocalValue(value);
@@ -186,7 +172,6 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
           </tbody>
         </table>
       </div>
-      {/* 오른쪽 영역을 Upload 컴포넌트로 대체 */}
       <Upload />
     </div>
   );
