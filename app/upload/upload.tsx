@@ -6,12 +6,10 @@ export default function Upload() {
   const [title, setTitle] = useState("타이틀 입력");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  // 생성된 객체 URL을 저장하여 추후 해제할 수 있도록 함
   const currentImageUrlRef = useRef<string | null>(null);
 
   const handleImageFile = useCallback((file: File) => {
     const url = URL.createObjectURL(file);
-    // 이전 URL이 있다면 해제
     if (currentImageUrlRef.current) {
       URL.revokeObjectURL(currentImageUrlRef.current);
     }
@@ -44,7 +42,6 @@ export default function Upload() {
     [handleImageFile]
   );
 
-  // 컴포넌트 언마운트 시 객체 URL 정리
   useEffect(() => {
     return () => {
       if (currentImageUrlRef.current) {

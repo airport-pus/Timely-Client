@@ -26,7 +26,6 @@ function EditableCell({
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
-  // saveSelection 함수를 useCallback으로 메모이제이션
   const saveSelection = useCallback(() => {
     const selection = window.getSelection();
     if (selection && selection.rangeCount > 0 && cellRef.current) {
@@ -39,7 +38,6 @@ function EditableCell({
     }
   }, []);
 
-  // TreeWalker를 사용하여 선택 영역 복원 함수 최적화
   const restoreSelection = useCallback(() => {
     const sel = window.getSelection();
     if (sel && cellRef.current && selectionRef.current) {
