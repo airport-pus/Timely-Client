@@ -137,7 +137,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
 
   return (
     <div className="w-full mt-8 flex border-2 border-dashed border-gray-300">
-      <div className="w-[60%] overflow-x-auto p-4">
+      <div className="w-[65%] overflow-x-auto p-4">
         <div className="text-gray300 text-center text-[15px] mb-3">
           ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
           <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.

@@ -51,15 +51,15 @@ export default function Upload() {
   }, []);
 
   return (
-    <div className="w-[30%] p-4">
+    <div className="w-[35%] p-4">
       <input
         type="text"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
-        className="text-2xl font-bold mb-4 w-full border-b-2 border-transparent hover:border-gray-300 focus:border-[#2B8F70] focus:outline-none px-2 py-1 mt-4"
+        className="text-2xl font-bold mb-4 w-full border-b-2 border-transparent hover:border-gray-300 focus:border-[#2B8F70] focus:outline-none px-2 py-1 mt-8"
       />
       <div
-        className="w-70 h-100 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+        className="w-80 h-107 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
         onClick={handleImageClick}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
