@@ -21,17 +21,9 @@ export default function Edit() {
     const oldValue = tableData[rowIndex][colIndex];
     if (oldValue === newValue) return;
 
-    let hasDuplicate = false;
-    for (let i = 0; i < tableData.length; i++) {
-      for (let j = 0; j < tableData[i].length; j++) {
-        if (i === rowIndex && j === colIndex) continue;
-        if (tableData[i][j] === oldValue) {
-          hasDuplicate = true;
-          break;
-        }
-      }
-      if (hasDuplicate) break;
-    }
+    const hasDuplicate = tableData.some((row, i) =>
+      row.some((cell, j) => (i !== rowIndex || j !== colIndex) && cell === oldValue)
+    );
 
     let updateAll = false;
     if (hasDuplicate) {
@@ -39,30 +31,29 @@ export default function Edit() {
         `"${oldValue}"이(가) 포함된 다른 셀도 모두 "${newValue}"(으)로 변경하시겠습니까?`
       );
     }
-    setTableData(prevData =>
-      prevData.map((row, i) =>
-        row.map((cell, j) => {
-          if (i === rowIndex && j === colIndex) {
-            return newValue;
-          }
-          if (updateAll && cell === oldValue) {
-            setEditedCells(prev => {
-              const newSet = new Set(prev);
-              newSet.add(`${i}-${j}`);
-              return newSet;
-            });
-            return newValue;
-          }
-          return cell;
-        })
-      )
+
+    const newTableData = tableData.map((row, i) =>
+      row.map((cell, j) => {
+        if (i === rowIndex && j === colIndex) return newValue;
+        if (updateAll && cell === oldValue) return newValue;
+        return cell;
+      })
     );
 
-    setEditedCells(prev => {
-      const newSet = new Set(prev);
-      newSet.add(`${rowIndex}-${colIndex}`);
-      return newSet;
-    });
+    const newEditedCells = new Set(editedCells);
+    newEditedCells.add(`${rowIndex}-${colIndex}`);
+    if (updateAll) {
+      tableData.forEach((row, i) => {
+        row.forEach((cell, j) => {
+          if (cell === oldValue && !(i === rowIndex && j === colIndex)) {
+            newEditedCells.add(`${i}-${j}`);
+          }
+        });
+      });
+    }
+
+    setTableData(newTableData);
+    setEditedCells(newEditedCells);
   };
 
   return (
