@@ -1,28 +1,57 @@
 "use client";
 
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 
 export default function Upload() {
   const [title, setTitle] = useState("타이틀 입력");
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // 생성된 객체 URL을 저장하여 추후 해제할 수 있도록 함
+  const currentImageUrlRef = useRef<string | null>(null);
 
-  const handleImageFile = (file: File) => {
+  const handleImageFile = useCallback((file: File) => {
     const url = URL.createObjectURL(file);
-    setImageUrl(url);
-  };
-
-  const handleImageClick = () => {
-    fileInputRef.current?.click();
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files[0];
-    if (file && file.type.startsWith("image/")) {
-      handleImageFile(file);
+    // 이전 URL이 있다면 해제
+    if (currentImageUrlRef.current) {
+      URL.revokeObjectURL(currentImageUrlRef.current);
     }
-  };
+    currentImageUrlRef.current = url;
+    setImageUrl(url);
+  }, []);
+
+  const handleImageClick = useCallback(() => {
+    fileInputRef.current?.click();
+  }, []);
+
+  const handleDrop = useCallback(
+    (e: React.DragEvent<HTMLDivElement>) => {
+      e.preventDefault();
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith("image/")) {
+        handleImageFile(file);
+      }
+    },
+    [handleImageFile]
+  );
+
+  const handleFileChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (file) {
+        handleImageFile(file);
+      }
+    },
+    [handleImageFile]
+  );
+
+  // 컴포넌트 언마운트 시 객체 URL 정리
+  useEffect(() => {
+    return () => {
+      if (currentImageUrlRef.current) {
+        URL.revokeObjectURL(currentImageUrlRef.current);
+      }
+    };
+  }, []);
 
   return (
     <div className="w-[35%] p-4">
@@ -70,10 +99,7 @@ export default function Upload() {
         ref={fileInputRef}
         className="hidden"
         accept="image/*"
-        onChange={(e) => {
-          const file = e.target.files?.[0];
-          if (file) handleImageFile(file);
-        }}
+        onChange={handleFileChange}
       />
     </div>
   );
