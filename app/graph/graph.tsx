@@ -136,43 +136,45 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
 
   return (
-    <div className="w-full mt-8 flex border-2 border-dashed border-gray-300">
-      <div className="w-[65%] overflow-x-auto p-4">
-        <div className="text-gray300 text-center text-[15px] mb-3">
-          ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
-          <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
-        </div>
-        <table className="w-full border-collapse">
-          <thead className="bg-gray-200">
-            <tr>
-              <th className={`${cellClass} w-1/8`}>교시</th>
-              <th className={`${cellClass} w-1/6`}>월</th>
-              <th className={`${cellClass} w-1/6`}>화</th>
-              <th className={`${cellClass} w-1/6`}>수</th>
-              <th className={`${cellClass} w-1/6`}>목</th>
-              <th className={`${cellClass} w-1/6`}>금</th>
-            </tr>
-          </thead>
-          <tbody>
-            {tableData.map((row, rowIndex) => (
-              <tr key={rowIndex}>
-                {row.map((cellValue, colIndex) => (
-                  <EditableCell
-                    key={colIndex}
-                    value={cellValue}
-                    rowIndex={rowIndex}
-                    colIndex={colIndex}
-                    edited={editedCells.has(`${rowIndex}-${colIndex}`)}
-                    className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
-                    onCellUpdate={onCellUpdate}
-                  />
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
+    <>
+      <div className="text-gray300 text-center text-[15px] mt-6 mb-[-8]">
+        ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
+        <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
       </div>
-      <Upload />
-    </div>
+      <div className="w-full mt-8 flex border-2 border-dashed border-gray-300">
+        <div className="w-[65%] overflow-x-auto p-4">
+          <table className="w-full border-collapse">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className={`${cellClass} w-1/8`}>교시</th>
+                <th className={`${cellClass} w-1/6`}>월</th>
+                <th className={`${cellClass} w-1/6`}>화</th>
+                <th className={`${cellClass} w-1/6`}>수</th>
+                <th className={`${cellClass} w-1/6`}>목</th>
+                <th className={`${cellClass} w-1/6`}>금</th>
+              </tr>
+            </thead>
+            <tbody>
+              {tableData.map((row, rowIndex) => (
+                <tr key={rowIndex}>
+                  {row.map((cellValue, colIndex) => (
+                    <EditableCell
+                      key={colIndex}
+                      value={cellValue}
+                      rowIndex={rowIndex}
+                      colIndex={colIndex}
+                      edited={editedCells.has(`${rowIndex}-${colIndex}`)}
+                      className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
+                      onCellUpdate={onCellUpdate}
+                    />
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        <Upload />
+      </div>
+    </>
   );
 }
