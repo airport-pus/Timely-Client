@@ -29,7 +29,7 @@ export default function Home() {
         }}
       >
         <div className="grid grid-cols-1 gap-0 mx-auto max-w-192 items-center justify-items-center p-4 pb-20 text-black">
-          <div className="ml-[-56]">
+          <div className="min-w-220">
             <Header />
             <Search />
             <Edit />

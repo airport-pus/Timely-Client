@@ -51,7 +51,7 @@ const Search = () => {
           </option>
         ))}
       </select>
-      <select className="border border-gray-300 px-4 py-2 rounded-md mr-[-56px]">
+      <select className="border border-gray-300 px-4 py-2 rounded-md">
         {CLASS_OPTIONS.map((option) => (
           <option key={option.value} value={option.value}>
             {option.label}
