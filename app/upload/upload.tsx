@@ -51,7 +51,7 @@ export default function Upload() {
   }, []);
 
   return (
-    <div className="w-[35%] p-4">
+    <div className="w-[45%] p-4">
       <input
         type="text"
         value={title}
@@ -59,7 +59,7 @@ export default function Upload() {
         className="text-2xl font-bold mb-4 w-full border-b-2 border-transparent hover:border-gray-300 focus:border-[#2B8F70] focus:outline-none px-2 py-1 mt-8"
       />
       <div
-        className="w-80 h-107 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
+        className="w-full h-107 bg-gray-100 rounded-lg flex flex-col items-center justify-center cursor-pointer hover:bg-gray-200 transition-colors"
         onClick={handleImageClick}
         onDrop={handleDrop}
         onDragOver={(e) => e.preventDefault()}
