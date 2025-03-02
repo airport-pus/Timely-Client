@@ -5,12 +5,10 @@ import Graph from "../components/graph/graph";
 import Background from "../components/background/background";
 import Sticker from "../components/sticker/sticker";
 import Save from "../components/save/save";
-import Text from "../components/text/text";
 
 const TABS = [
   { value: "표", label: "표" },
   { value: "배경", label: "배경" },
-  { value: "텍스트", label: "텍스트" },
   { value: "스티커", label: "스티커" },
   { value: "저장", label: "저장" },
 ];
@@ -18,9 +16,8 @@ const TABS = [
 export default function Custom() {
   const [selectedTab, setSelectedTab] = useState("표");
 
-  const activeClass =
-    "text-[#2b8f70] after:content-[''] after:absolute after:bottom-0 after:left-[-10%] after:w-[120%] after:h-0.5 after:bg-[#2b8f70]";
-  const inactiveClass = "text-gray-600";
+  const activeClass = "bg-[#e6f7f1] text-[#2b8f70] font-medium border-b-2 border-[#2b8f70]";
+  const inactiveClass = "bg-[#F2F4F6] text-gray-600";
 
   const renderTabContent = () => {
     switch (selectedTab) {
@@ -32,20 +29,18 @@ export default function Custom() {
         return <Sticker />;
       case "저장":
         return <Save />;
-      case "텍스트":
-        return <Text />;
       default:
-      return <Text />;
+        return <Graph />;
     }
   };
 
   return (
     <div className="w-full max-w-screen-md mt-8">
-      <nav className="flex space-x-12 mb-4">
+      <nav className="flex mb-4 w-full">
         {TABS.map((tab) => (
           <button
             key={tab.value}
-            className={`pb-1 cursor-pointer relative text-lg font-medium ${
+            className={`py-2 flex-1 cursor-pointer text-lg ${
               selectedTab === tab.value ? activeClass : inactiveClass
             }`}
             onClick={() => setSelectedTab(tab.value)}
@@ -54,8 +49,6 @@ export default function Custom() {
           </button>
         ))}
       </nav>
-      <div className="border-b border-[#AEAEAE] w-213 mb-4"></div>
-
       <div>
         {renderTabContent()}
       </div>

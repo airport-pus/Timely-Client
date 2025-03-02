@@ -36,7 +36,7 @@ export default function Text() {
     <div className='w-96'>
       <p>현재 글자색: {textColor}</p>
       <h2 className="text-lg font-semibold mb-4">
-        글자 색상 지정
+        텍스트 색상 지정
       </h2>
       <ColorPicker
         height={140} 

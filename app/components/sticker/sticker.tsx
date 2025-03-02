@@ -37,7 +37,9 @@ export function StickerItem({ image }: { image: StickerImage }) {
 export default function Sticker() {
   return (
     <div>
-      <div className="bg-[#F3F4F6] rounded-[8px] h-30 w-222 ml-[-2] flex items-center justify-start gap-10 pl-4">
+      <h2 className="text-xl font-bold mb-1">스티커 추가</h2>
+      <p className="text-sm text-gray-600 mb-3">원하는 스티커를 드래그하여 사용하세요.</p>
+      <div className="rounded-[8px] h-30 w-222 ml-[-20] flex items-center justify-start gap-10 pl-4">
         {images.map((image) => (
           <StickerItem key={image.id} image={image} />
         ))}

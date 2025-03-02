@@ -34,9 +34,9 @@ export default function Graph() {
 
   return (
     <div className='w-96'>
-      <p>현재 배경색: {borderColor}</p>
+      <p>현재 색상: {borderColor}</p>
       <h2 className="text-lg font-semibold mb-4">
-        표 색상 지정
+        표 선분 색상 지정
       </h2>
       <ColorPicker
         height={140} 

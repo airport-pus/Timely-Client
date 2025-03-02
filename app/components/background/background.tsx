@@ -34,9 +34,9 @@ export default function Background() {
 
   return (
     <div className='w-96'>
-      <p>현재 배경색: {backgroundColor}</p>
+      <p>현재 색상: {backgroundColor}</p>
       <h2 className="text-lg font-semibold mb-4">
-        표 색상 지정
+        표 베경 색상 지정
       </h2>
       <ColorPicker
         height={140} 
