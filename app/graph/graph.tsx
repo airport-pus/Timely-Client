@@ -3,7 +3,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
 import Upload from "../upload/upload";
 import { useAtomValue } from "jotai";
-import { backgroundColorAtom } from "../atoms";
+import { backgroundColorAtom, borderColorAtom } from "../atoms";
 export type EditableCellProps = {
   value: string;
   rowIndex: number;
@@ -26,6 +26,7 @@ function EditableCell({
   const [isComposing, setIsComposing] = useState(false);
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
+  const borderColor = useAtomValue(borderColorAtom);
 
   const saveSelection = useCallback(() => {
     const selection = window.getSelection();
@@ -121,6 +122,7 @@ function EditableCell({
       onBlur={isEditable ? handleBlur : undefined}
       onKeyDown={isEditable ? handleKeyDown : undefined}
       className={`${className} ${edited ? "bg-[#FFFFFF]" : ""}`}
+      style={{borderColor:`${borderColor}`}} 
     >
       {localValue}
     </td>
@@ -136,6 +138,7 @@ export type GraphProps = {
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
   const backgroundColor = useAtomValue(backgroundColorAtom);
+  const borderColor = useAtomValue(borderColorAtom);
 
   return (
     <>
@@ -148,12 +151,12 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
-                <th className={`${cellClass} w-1/8`}>교시</th>
-                <th className={`${cellClass} w-1/6`}>월</th>
-                <th className={`${cellClass} w-1/6`}>화</th>
-                <th className={`${cellClass} w-1/6`}>수</th>
-                <th className={`${cellClass} w-1/6`}>목</th>
-                <th className={`${cellClass} w-1/6`}>금</th>
+                <th className={`${cellClass} w-1/8`}  style={{borderColor:`${borderColor}`}} >교시</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >월</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >화</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >수</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >목</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >금</th>
               </tr>
             </thead>
             <tbody>

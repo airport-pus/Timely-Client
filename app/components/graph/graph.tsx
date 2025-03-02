@@ -3,20 +3,20 @@
 import { useEffect } from 'react';
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/css";
-import { backgroundColorAtom } from '../../atoms';
+import { backgroundColorAtom, borderColorAtom } from '../../atoms';
 import { useAtom } from 'jotai';
 
 export default function Graph() {
   const [color, setColor] = useColor("#FFFFFF");
-  const [backgroundColor, setBackgroundColor] = useAtom(backgroundColorAtom);
+  const [borderColor, setBorderColor] = useAtom(borderColorAtom);
 
   useEffect(() => {
-    setBackgroundColor(color.hex);
+    setBorderColor(color.hex);
   }, [color]);
 
   return (
     <div className='w-96'>
-      <p>현재 배경색: {backgroundColor}</p>
+      <p>현재 배경색: {borderColor}</p>
       <h2 className="text-lg font-semibold mb-4">
         표 색상 지정
       </h2>
