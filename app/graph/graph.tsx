@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useState, useRef, useLayoutEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
 import Upload from "../upload/upload";
-
+import { useAtomValue } from "jotai";
+import { backgroundColorAtom, borderColorAtom, targetRefAtom } from "../atoms";
+import { useAtom } from "jotai";
 export type EditableCellProps = {
   value: string;
   rowIndex: number;
@@ -25,6 +27,7 @@ function EditableCell({
   const [isComposing, setIsComposing] = useState(false);
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
+  const borderColor = useAtomValue(borderColorAtom);
 
   const saveSelection = useCallback(() => {
     const selection = window.getSelection();
@@ -120,6 +123,7 @@ function EditableCell({
       onBlur={isEditable ? handleBlur : undefined}
       onKeyDown={isEditable ? handleKeyDown : undefined}
       className={`${className} ${edited ? "bg-[#FFFFFF]" : ""}`}
+      style={{borderColor:`${borderColor}`}} 
     >
       {localValue}
     </td>
@@ -134,6 +138,17 @@ export type GraphProps = {
 
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
+  const backgroundColor = useAtomValue(backgroundColorAtom);
+  const borderColor = useAtomValue(borderColorAtom);
+  const localRef = useRef(null);
+
+  const [, setDivRef] = useAtom(targetRefAtom);
+
+  useEffect(() => {
+    if (localRef.current) {
+      setDivRef(localRef.current);
+    }
+  }, [localRef, setDivRef]);
 
   return (
     <>
@@ -141,17 +156,17 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
         ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
         <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
       </div>
-      <div className="w-full mt-8 flex border-2 border-dashed border-gray-300">
+      <div ref={localRef} className="w-full mt-8 flex border-2 border-dashed border-gray-300" style={{backgroundColor:`${backgroundColor}`}}>
         <div className="w-[65%] overflow-x-auto p-4">
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">
               <tr>
-                <th className={`${cellClass} w-1/8`}>교시</th>
-                <th className={`${cellClass} w-1/6`}>월</th>
-                <th className={`${cellClass} w-1/6`}>화</th>
-                <th className={`${cellClass} w-1/6`}>수</th>
-                <th className={`${cellClass} w-1/6`}>목</th>
-                <th className={`${cellClass} w-1/6`}>금</th>
+                <th className={`${cellClass} w-1/8`}  style={{borderColor:`${borderColor}`}} >교시</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >월</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >화</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >수</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >목</th>
+                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >금</th>
               </tr>
             </thead>
             <tbody>
