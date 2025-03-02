@@ -1,6 +1,6 @@
   "use client";
 
-  import React, { useRef, DragEvent, useLayoutEffect, useCallback } from "react";
+  import React, { useRef, DragEvent, useLayoutEffect, useCallback, useState, useEffect } from "react";
   import { useAtom } from "jotai";
   import { placedStickersAtom, PlacedSticker } from "./../store/stickerAtom";
   import Upload from "../upload/upload";
@@ -130,6 +130,7 @@
 
   function DraggableSticker({ sticker }: { sticker: PlacedSticker }) {
     const [placedStickers, setPlacedStickers] = useAtom(placedStickersAtom);
+    const [isSelected, setIsSelected] = useState(false);
     const stickerRef = useRef<HTMLDivElement>(null);
     const containerRef = useRef<HTMLDivElement | null>(null);
     
@@ -137,8 +138,22 @@
       containerRef.current = document.querySelector('.border-dashed');
     }, []);
 
+    useEffect(() => {
+      const handleClickOutside = (e: MouseEvent) => {
+        if (stickerRef.current && !stickerRef.current.contains(e.target as Node)) {
+          setIsSelected(false);
+        }
+      };
+      
+      document.addEventListener('mousedown', handleClickOutside);
+      return () => {
+        document.removeEventListener('mousedown', handleClickOutside);
+      };
+    }, []);
+
     const handleMouseDown = (e: React.MouseEvent) => {
       e.stopPropagation();
+      setIsSelected(true);
       const startX = e.clientX;
       const startY = e.clientY;
       const initialX = sticker.x;
@@ -265,32 +280,36 @@
             pointerEvents: "none",
           }}
         />
-        <div
-          onMouseDown={handleResizeMouseDown}
-          style={{
-            position: "absolute",
-            right: 0,
-            bottom: 0,
-            width: 16,
-            height: 16,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            cursor: "nwse-resize",
-          }}
-        />
-        <div
-          onMouseDown={handleRotateMouseDown}
-          style={{
-            position: "absolute",
-            top: -20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: 16,
-            height: 16,
-            backgroundColor: "rgba(0,0,0,0.5)",
-            borderRadius: "50%",
-            cursor: "grab",
-          }}
-        />
+        {isSelected && (
+          <>
+            <div
+              onMouseDown={handleResizeMouseDown}
+              style={{
+                position: "absolute",
+                right: 0,
+                bottom: 0,
+                width: 16,
+                height: 16,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                cursor: "nwse-resize",
+              }}
+            />
+            <div
+              onMouseDown={handleRotateMouseDown}
+              style={{
+                position: "absolute",
+                top: -20,
+                left: "50%",
+                transform: "translateX(-50%)",
+                width: 16,
+                height: 16,
+                backgroundColor: "rgba(0,0,0,0.5)",
+                borderRadius: "50%",
+                cursor: "grab",
+              }}
+            />
+          </>
+        )}
       </div>
     );
   }
