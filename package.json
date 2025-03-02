@@ -10,9 +10,13 @@
   },
   "dependencies": {
     "@fontsource/pretendard": "^5.1.0",
+    "jotai": "^2.12.1",
     "next": "15.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-color": "^2.19.3",
+    "react-color-palette": "^7.3.0",
+    "react-dom": "^19.0.0",
+    "recoil": "^0.7.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",

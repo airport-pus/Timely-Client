@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useState, useRef, useLayoutEffect, useCallback } from "react";
+import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
 import Upload from "../upload/upload";
-
+import { useAtomValue } from "jotai";
+import { backgroundColorAtom } from "../atoms";
 export type EditableCellProps = {
   value: string;
   rowIndex: number;
@@ -134,6 +135,7 @@ export type GraphProps = {
 
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
+  const backgroundColor = useAtomValue(backgroundColorAtom);
 
   return (
     <>
@@ -141,7 +143,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
         ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
         <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
       </div>
-      <div className="w-full mt-8 flex border-2 border-dashed border-gray-300">
+      <div className="w-full mt-8 flex border-2 border-dashed border-gray-300" style={{backgroundColor:`${backgroundColor}`}}>
         <div className="w-[65%] overflow-x-auto p-4">
           <table className="w-full border-collapse">
             <thead className="bg-gray-200">

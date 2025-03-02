@@ -6,7 +6,7 @@ import Search from "./search/search";
 import Edit from "./edit/edit";
 import Footer from "./footer/footer";
 import Custom from "./custom/custom";
-
+import { RecoilRoot } from "recoil";
 export default function Home() {
   return (
     <>
