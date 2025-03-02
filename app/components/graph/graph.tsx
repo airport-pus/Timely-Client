@@ -1,18 +1,36 @@
 "use client"
 
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { ColorPicker, useColor } from "react-color-palette";
 import "react-color-palette/css";
 import { backgroundColorAtom, borderColorAtom } from '../../atoms';
 import { useAtom } from 'jotai';
 
 export default function Graph() {
-  const [color, setColor] = useColor("#FFFFFF");
   const [borderColor, setBorderColor] = useAtom(borderColorAtom);
+  const [color, setColor] = useColor(borderColor ? borderColor : "#BBBBBB");
+  const timerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    setBorderColor(color.hex);
-  }, [color]);
+    // Clear any existing timer
+    if (timerRef.current) {
+      clearTimeout(timerRef.current);
+    }
+    
+    // Set a new timer that will run after 500ms
+    timerRef.current = setTimeout(() => {
+      if (borderColor !== color.hex) {
+        setBorderColor(color.hex);
+      }
+    }, 10);
+    
+    // Cleanup function to clear the timer if component unmounts or effect runs again
+    return () => {
+      if (timerRef.current) {
+        clearTimeout(timerRef.current);
+      }
+    };
+  }, [color, borderColor]);
 
   return (
     <div className='w-96'>

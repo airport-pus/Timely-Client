@@ -3,7 +3,7 @@
 import React, { useRef, DragEvent, useLayoutEffect, useCallback, useState, useEffect } from "react";
 import { useAtom, useAtomValue } from "jotai";
 import { placedStickersAtom, PlacedSticker } from "./../store/stickerAtom";
-import { backgroundColorAtom, borderColorAtom, targetRefAtom } from "../atoms";
+import { backgroundColorAtom, borderColorAtom, targetRefAtom, textColorAtom } from "../atoms";
 import Upload from "../upload/upload";
 
 export type EditableCellProps = {
@@ -29,6 +29,7 @@ function EditableCell({
   const cellRef = useRef<HTMLTableCellElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
   const borderColor = useAtomValue(borderColorAtom);
+  const textColor = useAtomValue(textColorAtom);
 
   const saveSelection = useCallback(() => {
     const selection = window.getSelection();
@@ -124,7 +125,7 @@ function EditableCell({
       onBlur={isEditable ? handleBlur : undefined}
       onKeyDown={isEditable ? handleKeyDown : undefined}
       className={`${className} ${edited ? "bg-[#FFFFFF]" : ""}`}
-      style={{borderColor: `${borderColor}`}}
+      style={{borderColor: `${borderColor}`, color: `${textColor}`}}
     >
       {localValue}
     </td>
@@ -323,12 +324,28 @@ export type GraphProps = {
   onCellUpdate: (rowIndex: number, colIndex: number, newValue: string) => void;
 };
 
+function darkenHex(hex:string, percent: number) {
+  // HEX를 R, G, B로 변환
+  let r = parseInt(hex.substring(1, 3), 16);
+  let g = parseInt(hex.substring(3, 5), 16);
+  let b = parseInt(hex.substring(5, 7), 16);
+
+  // 밝기 줄이기
+  r = Math.max(0, Math.floor(r * (1 - percent / 100)));
+  g = Math.max(0, Math.floor(g * (1 - percent / 100)));
+  b = Math.max(0, Math.floor(b * (1 - percent / 100)));
+
+  // 다시 HEX로 변환
+  return `#${r.toString(16).padStart(2, '0')}${g.toString(16).padStart(2, '0')}${b.toString(16).padStart(2, '0')}`;
+}
+
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
   const containerRef = useRef<HTMLDivElement>(null);
   const [placedStickers, setPlacedStickers] = useAtom(placedStickersAtom);
   const backgroundColor = useAtomValue(backgroundColorAtom);
   const borderColor = useAtomValue(borderColorAtom);
+  const textColor = useAtomValue(textColorAtom);
   const [, setDivRef] = useAtom(targetRefAtom);
 
   useEffect(() => {
@@ -370,22 +387,23 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
       </div>
       <div
         className="w-full mt-8 relative border-2 border-dashed border-gray-300"
-        ref={containerRef}
         onDragOver={handleDragOver}
         onDrop={handleDrop}
         style={{ minHeight: 400, backgroundColor: `${backgroundColor}` }}
+        
       >
+        <div ref={containerRef} style={{ minHeight: 400, backgroundColor: `${backgroundColor}` }}>
         <div className="flex">
           <div className="w-[65%] overflow-x-auto p-4">
             <table className="w-full border-collapse">
               <thead className="bg-gray-200">
                 <tr>
-                  <th className={`${cellClass} w-1/8`} style={{borderColor: `${borderColor}`}}>교시</th>
-                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>월</th>
-                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>화</th>
-                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>수</th>
-                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>목</th>
-                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>금</th>
+                  <th className={`${cellClass} w-1/8`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>교시</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>월</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>화</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>수</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>목</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`, color: `${textColor}`, backgroundColor:`${darkenHex(backgroundColor, 20)}`}}>금</th>
                 </tr>
               </thead>
               <tbody>
@@ -412,6 +430,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
         {placedStickers.map((sticker) => (
           <DraggableSticker key={sticker.id} sticker={sticker} />
         ))}
+      </div>
       </div>
     </>
   );
