@@ -350,7 +350,7 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
 
   useEffect(() => {
     if (containerRef.current) {
-      setDivRef(containerRef.current);
+      setDivRef(containerRef.current as any);
     }
   }, [containerRef, setDivRef]);
 
