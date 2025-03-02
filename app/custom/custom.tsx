@@ -5,10 +5,12 @@ import Graph from "../components/graph/graph";
 import Background from "../components/background/background";
 import Sticker from "../components/sticker/sticker";
 import Save from "../components/save/save";
+import Text from "../components/text/text";
 
 const TABS = [
   { value: "표", label: "표" },
   { value: "배경", label: "배경" },
+  { value: "텍스트", label: "텍스트" },
   { value: "스티커", label: "스티커" },
   { value: "저장", label: "저장" },
 ];
@@ -30,8 +32,10 @@ export default function Custom() {
         return <Sticker />;
       case "저장":
         return <Save />;
+      case "텍스트":
+        return <Text />;
       default:
-        return <Graph />;
+      return <Text />;
     }
   };
 
