@@ -1,10 +1,11 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useLayoutEffect, useCallback } from "react";
-import Upload from "../upload/upload";
-import { useAtomValue } from "jotai";
+import React, { useRef, DragEvent, useLayoutEffect, useCallback, useState, useEffect } from "react";
+import { useAtom, useAtomValue } from "jotai";
+import { placedStickersAtom, PlacedSticker } from "./../store/stickerAtom";
 import { backgroundColorAtom, borderColorAtom, targetRefAtom } from "../atoms";
-import { useAtom } from "jotai";
+import Upload from "../upload/upload";
+
 export type EditableCellProps = {
   value: string;
   rowIndex: number;
@@ -123,10 +124,196 @@ function EditableCell({
       onBlur={isEditable ? handleBlur : undefined}
       onKeyDown={isEditable ? handleKeyDown : undefined}
       className={`${className} ${edited ? "bg-[#FFFFFF]" : ""}`}
-      style={{borderColor:`${borderColor}`}} 
+      style={{borderColor: `${borderColor}`}}
     >
       {localValue}
     </td>
+  );
+}
+
+function DraggableSticker({ sticker }: { sticker: PlacedSticker }) {
+  const [placedStickers, setPlacedStickers] = useAtom(placedStickersAtom);
+  const [isSelected, setIsSelected] = useState(false);
+  const stickerRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  
+  useLayoutEffect(() => {
+    containerRef.current = document.querySelector('.border-dashed');
+  }, []);
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (stickerRef.current && !stickerRef.current.contains(e.target as Node)) {
+        setIsSelected(false);
+      }
+    };
+    
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, []);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsSelected(true);
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialX = sticker.x;
+    const initialY = sticker.y;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!containerRef.current) return;
+      
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+
+      let newX = initialX + dx;
+      let newY = initialY + dy;
+
+      newX = Math.max(0, Math.min(newX, containerRect.width - sticker.width));
+      newY = Math.max(0, Math.min(newY, containerRect.height - sticker.height));
+      
+      setPlacedStickers((prev) =>
+        prev.map((s) =>
+          s.id === sticker.id ? { ...s, x: newX, y: newY } : s
+        )
+      );
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleResizeMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const initialWidth = sticker.width;
+    const initialHeight = sticker.height;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!containerRef.current) return;
+      
+      const containerRect = containerRef.current.getBoundingClientRect();
+      const dx = moveEvent.clientX - startX;
+      const dy = moveEvent.clientY - startY;
+      
+      let newWidth = Math.max(30, initialWidth + dx);
+      let newHeight = Math.max(30, initialHeight + dy);
+      
+      newWidth = Math.min(newWidth, containerRect.width - sticker.x);
+      newHeight = Math.min(newHeight, containerRect.height - sticker.y);
+      
+      setPlacedStickers((prev) =>
+        prev.map((s) =>
+          s.id === sticker.id
+            ? {
+                ...s,
+                width: newWidth,
+                height: newHeight,
+              }
+            : s
+        )
+      );
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  const handleRotateMouseDown = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const centerX = sticker.x + sticker.width / 2;
+    const centerY = sticker.y + sticker.height / 2;
+    const startAngle = Math.atan2(e.clientY - centerY, e.clientX - centerX);
+    const initialRotation = sticker.rotation;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      const currentAngle = Math.atan2(moveEvent.clientY - centerY, moveEvent.clientX - centerX);
+      const rotationDelta = (currentAngle - startAngle) * (180 / Math.PI);
+      setPlacedStickers((prev) =>
+        prev.map((s) =>
+          s.id === sticker.id ? { ...s, rotation: initialRotation + rotationDelta } : s
+        )
+      );
+    };
+
+    const handleMouseUp = () => {
+      window.removeEventListener("mousemove", handleMouseMove);
+      window.removeEventListener("mouseup", handleMouseUp);
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    window.addEventListener("mouseup", handleMouseUp);
+  };
+
+  return (
+    <div
+      ref={stickerRef}
+      onMouseDown={handleMouseDown}
+      style={{
+        position: "absolute",
+        left: sticker.x,
+        top: sticker.y,
+        width: sticker.width,
+        height: sticker.height,
+        transform: `rotate(${sticker.rotation}deg)`,
+        cursor: "move",
+      }}
+    >
+      <img
+        src={sticker.image.src}
+        alt={sticker.image.alt}
+        style={{
+          width: "100%",
+          height: "100%",
+          objectFit: "contain",
+          pointerEvents: "none",
+        }}
+      />
+      {isSelected && (
+        <>
+          <div
+            onMouseDown={handleResizeMouseDown}
+            style={{
+              position: "absolute",
+              right: 0,
+              bottom: 0,
+              width: 16,
+              height: 16,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              cursor: "nwse-resize",
+            }}
+          />
+          <div
+            onMouseDown={handleRotateMouseDown}
+            style={{
+              position: "absolute",
+              top: -20,
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 16,
+              height: 16,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              borderRadius: "50%",
+              cursor: "grab",
+            }}
+          />
+        </>
+      )}
+    </div>
   );
 }
 
@@ -138,17 +325,42 @@ export type GraphProps = {
 
 export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
   const cellClass = "py-1 px-1 border border-gray-300 text-center";
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [placedStickers, setPlacedStickers] = useAtom(placedStickersAtom);
   const backgroundColor = useAtomValue(backgroundColorAtom);
   const borderColor = useAtomValue(borderColorAtom);
-  const localRef = useRef(null);
-
   const [, setDivRef] = useAtom(targetRefAtom);
 
   useEffect(() => {
-    if (localRef.current) {
-      setDivRef(localRef.current);
+    if (containerRef.current) {
+      setDivRef(containerRef.current);
     }
-  }, [localRef, setDivRef]);
+  }, [containerRef, setDivRef]);
+
+  const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+  };
+
+  const handleDrop = (e: DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    if (!containerRef.current) return;
+    const data = e.dataTransfer.getData("sticker");
+    if (!data) return;
+    const stickerData = JSON.parse(data) as typeof placedStickers[number]["image"];
+    const rect = containerRef.current.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const newSticker: PlacedSticker = {
+      id: Date.now().toString(),
+      image: stickerData,
+      x,
+      y,
+      width: 80,
+      height: 80,
+      rotation: 0,
+    };
+    setPlacedStickers((prev) => [...prev, newSticker]);
+  };
 
   return (
     <>
@@ -156,39 +368,50 @@ export function Graph({ tableData, editedCells, onCellUpdate }: GraphProps) {
         ※ <span className="text-[#2B8F70]">셀을 클릭</span>하여 과목명을 수정한 후{" "}
         <span className="text-[#2B8F70]">Enter</span>를 누르면 변경사항이 저장됩니다.
       </div>
-      <div ref={localRef} className="w-full mt-8 flex border-2 border-dashed border-gray-300" style={{backgroundColor:`${backgroundColor}`}}>
-        <div className="w-[65%] overflow-x-auto p-4">
-          <table className="w-full border-collapse">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className={`${cellClass} w-1/8`}  style={{borderColor:`${borderColor}`}} >교시</th>
-                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >월</th>
-                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >화</th>
-                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >수</th>
-                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >목</th>
-                <th className={`${cellClass} w-1/6`}  style={{borderColor:`${borderColor}`}} >금</th>
-              </tr>
-            </thead>
-            <tbody>
-              {tableData.map((row, rowIndex) => (
-                <tr key={rowIndex}>
-                  {row.map((cellValue, colIndex) => (
-                    <EditableCell
-                      key={colIndex}
-                      value={cellValue}
-                      rowIndex={rowIndex}
-                      colIndex={colIndex}
-                      edited={editedCells.has(`${rowIndex}-${colIndex}`)}
-                      className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
-                      onCellUpdate={onCellUpdate}
-                    />
-                  ))}
+      <div
+        className="w-full mt-8 relative border-2 border-dashed border-gray-300"
+        ref={containerRef}
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
+        style={{ minHeight: 400, backgroundColor: `${backgroundColor}` }}
+      >
+        <div className="flex">
+          <div className="w-[65%] overflow-x-auto p-4">
+            <table className="w-full border-collapse">
+              <thead className="bg-gray-200">
+                <tr>
+                  <th className={`${cellClass} w-1/8`} style={{borderColor: `${borderColor}`}}>교시</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>월</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>화</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>수</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>목</th>
+                  <th className={`${cellClass} w-1/6`} style={{borderColor: `${borderColor}`}}>금</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {tableData.map((row, rowIndex) => (
+                  <tr key={rowIndex}>
+                    {row.map((cellValue, colIndex) => (
+                      <EditableCell
+                        key={colIndex}
+                        value={cellValue}
+                        rowIndex={rowIndex}
+                        colIndex={colIndex}
+                        edited={editedCells.has(`${rowIndex}-${colIndex}`)}
+                        className={`${cellClass} ${colIndex === 0 ? "h-16 w-1/12" : ""}`}
+                        onCellUpdate={onCellUpdate}
+                      />
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <Upload />
         </div>
-        <Upload />
+        {placedStickers.map((sticker) => (
+          <DraggableSticker key={sticker.id} sticker={sticker} />
+        ))}
       </div>
     </>
   );
